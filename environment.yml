@@ -1,4 +1,4 @@
-name: nli
+name: skipgram
 dependencies:
 - nltk=3.2.5
 - numpy=1.14.0

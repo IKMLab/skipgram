@@ -5,6 +5,8 @@ import nltk
 import pickling
 import string
 import collections
+import numpy as np
+import random
 
 
 def get_contexts(m):
@@ -80,7 +82,7 @@ def get_train_test():
 def get_vocab():
     if not pickling.exists(glovar.DATA_DIR, 'vocab'):
         token_set = get_token_set()
-        vocab = dict(zip(token_set, range(len(token_set))))
+        vocab = dict(zip(token_set, range(1, len(token_set) + 1)))
         pickling.save(vocab, glovar.DATA_DIR, 'vocab')
         return vocab
     else:
@@ -112,3 +114,56 @@ def wanted(comment):
                 and len(token) < 15
                 and all(s not in token for s in unwanted_substrs))
                for token in nltk.word_tokenize(comment))
+
+
+class NegativeSampler:
+
+    def __init__(self, vocab, frequencies, contexts):
+        """Create a new NegativeSampler.
+
+        Args:
+          vocab: Dictionary.
+          frequencies: List of integers, the frequencies of each word,
+            sorted in word index order.
+          contexts: Dictionary.
+        """
+        self.vocab = vocab
+        self.n = len(vocab)
+        self.contexts = contexts
+        self.distribution = self.p(list(frequencies.values()))
+
+    def __call__(self, tok_ix, num_negs):
+        """Get negative samples.
+
+        Args:
+          tok_ix: Integer, the index of the center word.
+          num_negs: Integer, the number of negative samples to take.
+        """
+        samples = np.random.choice(
+            self.n,
+            size=num_negs,
+            p=self.distribution)
+        # make sure we haven't sampled center word or its context
+        invalid = [-1, tok_ix] + list(self.contexts[tok_ix])
+        for i, ix in enumerate(samples):
+            if ix in invalid:
+                new_ix = -1
+                while new_ix in invalid:
+                    new_ix = random.choice(self.n,
+                                           num_negs,
+                                           self.distribution)
+                samples[i] = new_ix
+        return samples
+
+    def p(self, freqs):
+        """Determine the probability distribution for negative sampling.
+
+        Args:
+          freqs: List of integers.
+
+        Returns:
+          numpy.array.
+        """
+        """ Impelement Me"""
+        freqs = np.array(freqs)
+        return np.power(freqs, 3 / 4) / np.sum(np.power(freqs, 3 / 4))

@@ -10,7 +10,7 @@ import collections
 def get_contexts(m):
     if not pickling.exists(glovar.DATA_DIR, 'contexts_%s' % m):
         vocab = get_vocab()
-        contexts = {k: set() for k in range(len(vocab))}
+        contexts = {k: set() for k in range(1, len(vocab) + 1)}
         for x in get_token_lists():
             for i, center in enumerate(x):
                 center = vocab[center]

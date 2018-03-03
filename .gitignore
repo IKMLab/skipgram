@@ -3,6 +3,14 @@ nn_baseline.ipynb
 data/train.csv
 data/test.csv
 data/2.zip
+scratch.py
+data/token_lists.pkl
+data/token_set.pkl
+data/unwanted.pkl
+data/vocab.pkl
+data/wanted.pkl
+data/contexts_5.pkl
+data/frequencies.pkl
 
 
 # Byte-compiled / optimized / DLL files

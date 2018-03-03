@@ -1,7 +1,7 @@
 # Project Specific
 nn_baseline.ipynb
-data/train.csv
-data/test.csv
+data/train_full.csv
+data/test_full.csv
 data/2.zip
 scratch.py
 data/token_lists.pkl
